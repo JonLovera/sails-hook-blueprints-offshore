@@ -84,7 +84,6 @@ var actionUtil = {
             associations.push(populationOptions);
       }
     });
-
     return actionUtil.populateQuery(query, associations, req._sails);
   },
 
