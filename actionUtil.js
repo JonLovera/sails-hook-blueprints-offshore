@@ -3,7 +3,7 @@
  */
 
 var util = require('util');
-var _ = require('lodash');
+var _ = require('@sailshq/lodash');
 var mergeDefaults = require('merge-defaults');
 
 /**
@@ -60,16 +60,28 @@ var actionUtil = {
       // name of the association attribute, and value is true/false
       // (true to populate, false to not)
       if (shouldPopulate) {
-        var populationLimit =
-          _options['populate_' + association.alias + '_limit'] ||
-          _options.populate_limit ||
-          _options.limit ||
-          DEFAULT_POPULATE_LIMIT;
+            // IMPORTANT NOTE: This is my trick. We should take advanced options from request parameter to make requests even more flexible
+            var populationOptions = req.param('populate_' + association.alias);
+            populationOptions = tryToParseJSON(populationOptions);
 
-        associations.push({
-          alias: association.alias,
-          limit: populationLimit
-        });
+            if (!populationOptions)
+                populationOptions = {
+                  alias: association.alias,
+                  limit: populationLimit
+                };
+
+            if (!populationOptions.alias)
+                populationOptions.alias = association.alias;
+
+            if (!populationOptions.limit) {
+                var populationLimit = _options['populate_' + association.alias+'_limit'] ||
+                                      _options.populate_limit ||
+                                      _options.limit ||
+                                      DEFAULT_POPULATE_LIMIT;
+                populationOptions.limit= populationLimit;
+            }
+
+            associations.push(populationOptions);
       }
     });
 
@@ -104,9 +116,11 @@ var actionUtil = {
     var DEFAULT_POPULATE_LIMIT = (sails && sails.config.blueprints.defaultLimit) || 30;
 
     return _.reduce(associations, function(query, association) {
-      return query.populate(association.alias, {
-        limit: association.limit || DEFAULT_POPULATE_LIMIT
-      });
+        let alias = association.alias;
+        association.limit = association.limit || DEFAULT_POPULATE_LIMIT;
+        delete association.alias;
+
+      return query.populate(alias, association);
     }, query);
   },
 
