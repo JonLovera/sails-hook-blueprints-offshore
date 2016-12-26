@@ -1,1 +1,0 @@
-module.exports.models = {autosubscribe: [], connection: "memory"}

@@ -32,7 +32,7 @@ module.exports = function(sails) {
    * (need access to `sails`)
    */
 
-  var onRoute = require('./onRoute')(sails);
+  var onRoute = require('sails/lib/hooks/blueprints/onRoute')(sails);
 
   var hook;
 

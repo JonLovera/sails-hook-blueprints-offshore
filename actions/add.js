@@ -105,9 +105,9 @@ module.exports = function addToCollection (req, res) {
           if (req._sails.hooks['pubsub-offshore']) {
             if (req.isSocket) {
               ChildModel.subscribe(req, [newChildRecord[ChildModel.primaryKey]]);
-              ChildModel._introduce(newChildRecord);
+              ChildModel.introduce(newChildRecord);
             }
-            ChildModel._publishCreate(newChildRecord, !req.options.mirror && req);
+            ChildModel.publishCreate(newChildRecord, !req.options.mirror && req);
           }
 
           createdChild = true;
@@ -161,7 +161,7 @@ module.exports = function addToCollection (req, res) {
         // Subscribe to the model you're adding to, if this was a socket request
         if (req.isSocket) { Model.subscribe(req, [async_data.parent[Model.primaryKey]]); }
           // Publish to subscribed sockets
-        Model._publishAdd(async_data.parent[Model.primaryKey], relation, async_data.actualChildPkValue, !req.options.mirror && req, {noReverse: createdChild});
+        Model.publishAdd(async_data.parent[Model.primaryKey], relation, async_data.actualChildPkValue, !req.options.mirror && req, {noReverse: createdChild});
       }
 
       // Finally, look up the parent record again and populate the relevant collection.

@@ -39,13 +39,13 @@ module.exports = function createRecord (req, res) {
         if (req._sails.hooks['pubsub-offshore']) {
             if (req.isSocket) {
                 Model.subscribe(req, [newInstance[Model.primaryKey]]);
-                Model._introduce(newInstance);
+                Model.introduce(newInstance);
             }
             // Make sure data is JSON-serializable before publishing
             var publishData = _.isArray(newInstance) ?
                                 _.map(newInstance, function(instance) {return instance.toJSON();}) :
                                 newInstance.toJSON();
-            Model._publishCreate(publishData, !req.options.mirror && req);
+            Model.publishCreate(publishData, !req.options.mirror && req);
         }
 
         // Send response

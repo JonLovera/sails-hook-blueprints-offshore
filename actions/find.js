@@ -55,7 +55,7 @@ module.exports = function findRecords (req, res) {
       Model.subscribe(req, _.pluck(matchingRecords, Model.primaryKey));
       // Only `._watch()` for new instances of the model if
       // `autoWatch` is enabled.
-      if (req.options.autoWatch) { Model._watch(req); }
+      if (req.options.autoWatch) { Model.watch(req); }
       // Also subscribe to instances of all associated models
       _.each(matchingRecords, function (record) {
         actionUtil.subscribeDeep(req, record);
